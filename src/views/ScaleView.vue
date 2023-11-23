@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import TheWelcome from '../components/TheWelcome.vue'
+import ScaleBuilder from '@/components/ScaleBuilder.vue'
 </script>
 
 <template>
   <main>
-    <TheWelcome />
+    <ScaleBuilder />
   </main>
 </template>
