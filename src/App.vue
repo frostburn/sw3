@@ -1,31 +1,145 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { onMounted, onUnmounted, ref, watch } from 'vue'
 import { RouterLink, RouterView } from 'vue-router'
+import { useAudioContextStore } from './stores/audio-context'
+import { Keyboard, type CoordinateKeyboardEvent } from '@/keyboard'
+import { useScaleStore } from './stores/scale'
 
-const colorScheme = ref<'light' | 'dark'>('dark')
+const audioContext = useAudioContextStore()
+const scale = useScaleStore()
+
+const colorScheme = ref<'light' | 'dark'>('light')
+const baseMidiNote = ref(60)
+const equaveShift = ref(0)
+const degreeShift = ref(0)
+const isomorphicHorizontal = ref(1)
+const isomorphicVertical = ref(7)
 const typingActive = ref(false)
 
-document.documentElement.setAttribute('data-theme', colorScheme.value)
+function emptyKeyup() {}
 
-/*
+function keyboardNoteOn(index: number) {
+  if (!audioContext.synth) {
+    return emptyKeyup
+  }
+  return audioContext.synth.noteOn(440 * 2 ** ((index - baseMidiNote.value) / 12), 0.8)
+}
+
+// === Typing keyboard state ===
+function windowKeydownOrUp(event: KeyboardEvent | MouseEvent) {
+  const target = event.target
+  // Keep typing activated while adjusting sliders
+  if (target instanceof HTMLInputElement && ['range', 'radio', 'checkbox'].includes(target.type)) {
+    typingActive.value = true
+    return
+  }
+  // Disable typing for other types of input elements
+  if (
+    target instanceof HTMLTextAreaElement ||
+    target instanceof HTMLInputElement ||
+    target instanceof HTMLSelectElement
+  ) {
+    typingActive.value = false
+  } else {
+    typingActive.value = true
+  }
+}
+
+// === Handle special keys ===
+function windowKeydown(event: KeyboardEvent) {
+  // Currently editing the scale, bail out
+  if (!typingActive.value) {
+    return
+  }
+
+  // Disable browser specific features like quick find on Firefox
+  event.preventDefault()
+
+  // The key left of Digit1 releases sustained keys
+  if (event.code === 'Backquote') {
+    typingKeyboard.deactivate()
+    return
+  }
+
+  typingKeyboard.keydown(event)
+}
+
+// Keyups don't make new sounds so they can be passed through.
+function windowKeyup(event: KeyboardEvent) {
+  typingKeyboard.keyup(event)
+}
+
+// === Typing keyboard input ===
+const typingKeyboard = new Keyboard()
+
+function typingKeydown(event: CoordinateKeyboardEvent) {
+  // Key not mapped to layers, bail out
+  if (event.coordinates === undefined) {
+    return emptyKeyup
+  }
+
+  const [x, y, z] = event.coordinates
+
+  // Key not in the layer with digits and letters, bail out
+  if (z !== 1) {
+    return emptyKeyup
+  }
+
+  let index = baseMidiNote.value + scale.scale.size * equaveShift.value
+
+  index += degreeShift.value + x * isomorphicHorizontal.value + (2 - y) * isomorphicVertical.value
+
+  return keyboardNoteOn(index)
+}
+
+watch(colorScheme, (newValue) => {
+  document.documentElement.setAttribute('data-theme', newValue)
+  window.localStorage.setItem('colorScheme', newValue)
+})
+
 onMounted(() => {
+  document.addEventListener('touchstart', audioContext.initialize)
+  document.addEventListener('mousedown', audioContext.initialize)
+  document.addEventListener('keydown', audioContext.initialize)
+
+  window.addEventListener('keyup', windowKeyup)
+  window.addEventListener('keydown', windowKeydownOrUp)
+  window.addEventListener('keyup', windowKeydownOrUp)
+  window.addEventListener('mousedown', windowKeydownOrUp)
+  window.addEventListener('keydown', windowKeydown)
+  typingKeyboard.addKeydownListener(typingKeydown)
+
   // Fetch user preferences
-  const storage = window.localStorage;
-  if ("colorScheme" in storage) {
-    const scheme = storage.getItem("colorScheme");
-    if (scheme === "light" || scheme === "dark") {
-      colorScheme.value = scheme;
+  const storage = window.localStorage
+  if ('colorScheme' in storage) {
+    const scheme = storage.getItem('colorScheme')
+    if (scheme === 'light' || scheme === 'dark') {
+      colorScheme.value = scheme
     }
   } else {
     // Infer based on a media query.
-    if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
-      colorScheme.value = "dark";
+    if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      colorScheme.value = 'dark'
     } else {
-      colorScheme.value = "light";
+      colorScheme.value = 'light'
     }
   }
-});
-*/
+})
+
+onUnmounted(async () => {
+  window.removeEventListener('keydown', windowKeydown)
+  window.removeEventListener('keyup', windowKeyup)
+  window.removeEventListener('keydown', windowKeydownOrUp)
+  window.removeEventListener('keyup', windowKeydownOrUp)
+  window.removeEventListener('mousedown', windowKeydownOrUp)
+  typingKeyboard.removeEventListener(typingKeydown)
+
+  document.removeEventListener('touchstart', audioContext.initialize)
+  document.removeEventListener('mousedown', audioContext.initialize)
+  document.removeEventListener('keydown', audioContext.initialize)
+
+  await audioContext.unintialize()
+})
 </script>
 
 <template>

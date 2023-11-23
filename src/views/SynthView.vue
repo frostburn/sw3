@@ -1,15 +1,70 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { useAudioContextStore } from '@/stores/audio-context'
+import { WAVEFORMS } from '@/synth'
+import { computed } from 'vue'
 
-const waveform = ref('loopy')
-const waveforms = ['loopy', 'droopy', 'swoopy']
-const mainVolume = ref(0.2)
-const attackTime = ref(0.2)
-const decayTime = ref(0.2)
-const sustainLevel = ref(0.2)
-const releaseTime = ref(0.2)
-const maxPolyphony = ref(2)
-const audioDelay = ref(0.2)
+const audioContext = useAudioContextStore()
+
+const mainVolume = computed({
+  get: () => audioContext.mainVolume,
+  set(newValue: number) {
+    // There's something wrong with how input ranges are handled.
+    if (typeof newValue !== 'number') {
+      newValue = parseFloat(newValue)
+    }
+    if (!isNaN(newValue)) {
+      audioContext.mainVolume = newValue
+    }
+  }
+})
+
+const attackTime = computed({
+  get: () => audioContext.attackTime,
+  set(newValue: number) {
+    if (typeof newValue !== 'number') {
+      newValue = parseFloat(newValue)
+    }
+    if (!isNaN(newValue)) {
+      audioContext.attackTime = newValue
+    }
+  }
+})
+
+const decayTime = computed({
+  get: () => audioContext.decayTime,
+  set(newValue: number) {
+    if (typeof newValue !== 'number') {
+      newValue = parseFloat(newValue)
+    }
+    if (!isNaN(newValue)) {
+      audioContext.decayTime = newValue
+    }
+  }
+})
+
+const sustainLevel = computed({
+  get: () => audioContext.sustainLevel,
+  set(newValue: number) {
+    if (typeof newValue !== 'number') {
+      newValue = parseFloat(newValue)
+    }
+    if (!isNaN(newValue)) {
+      audioContext.sustainLevel = newValue
+    }
+  }
+})
+
+const releaseTime = computed({
+  get: () => audioContext.releaseTime,
+  set(newValue: number) {
+    if (typeof newValue !== 'number') {
+      newValue = parseFloat(newValue)
+    }
+    if (!isNaN(newValue)) {
+      audioContext.releaseTime = newValue
+    }
+  }
+})
 </script>
 
 <template>
@@ -22,8 +77,8 @@ const audioDelay = ref(0.2)
           <input class="control" type="range" min="0" max="0.4" step="any" v-model="mainVolume" />
           <div class="control">
             <label for="waveform">Waveform</label>
-            <select id="waveform" class="control" v-model="waveform">
-              <option v-for="waveform of waveforms" :value="waveform" :key="waveform">
+            <select id="waveform" class="control" v-model="audioContext.waveform">
+              <option v-for="waveform of WAVEFORMS" :value="waveform" :key="waveform">
                 {{ waveform }}
               </option>
             </select>
@@ -70,18 +125,14 @@ const audioDelay = ref(0.2)
           />
           <div class="control">
             <label for="polyphony">Max polyphony</label>
-            <input id="polyphony" type="number" min="1" max="32" v-model="maxPolyphony" />
+            <input
+              id="polyphony"
+              type="number"
+              min="1"
+              max="32"
+              v-model="audioContext.maxPolyphony"
+            />
           </div>
-          <label for="release">Audio delay (reduce pops)</label>
-          <input
-            id="audio-delay"
-            class="control"
-            type="range"
-            min="0.0"
-            max="0.1"
-            step="any"
-            v-model="audioDelay"
-          />
         </div>
       </div>
     </div>
