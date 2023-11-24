@@ -21,6 +21,37 @@ function relative(event: MouseEvent) {
   scale.lines.push(target.textContent!)
   scale.lines.push('P8')
 }
+
+function pythagoras() {
+  scale.name = 'Pythagorean chain of fifths'
+  scale.autoFrequency = true
+  scale.lines.length = 0
+  scale.lines.push('440 Hz')
+  for (const input of 'd5,m2,m6,m3,m7,P4,P1,P5,M2,M6,M3,M7,A4'.split(',')) {
+    scale.lines.push(input)
+  }
+  scale.lines.push('P8')
+}
+
+function twelveTone() {
+  scale.name = '12-tone equal temperament'
+  scale.autoFrequency = true
+  scale.lines.length = 0
+  scale.lines.push('440 Hz')
+  for (const input of 'm2,M2,m3,M3,P4,A4,P5,m6,M6,m7,M7,12@'.split(',')) {
+    scale.lines.push(input)
+  }
+  scale.lines.push('P8')
+}
+
+function absoluteFJS() {
+  scale.name = 'Bb4^7 above C4'
+  scale.autoFrequency = false
+  scale.lines.length = 0
+  scale.lines.push('C4 = 261.63Hz')
+  scale.lines.push('Bb4^7')
+  scale.lines.push('C5')
+}
 </script>
 <template>
   <h1>Welcome to Scale Workshop 3</h1>
@@ -79,7 +110,7 @@ function relative(event: MouseEvent) {
   </p>
   <p>
     This also means that e.g. <code @click="relative">1.2</code> is a true 5-limit interval, namely
-    6/5.
+    <code @click="relative">6/5</code>.
   </p>
   <p>
     The whole part is optional: <code @click="relative">.5</code> is the same as
@@ -131,10 +162,61 @@ function relative(event: MouseEvent) {
     <code @click="relative">81/80</code> or <code @click="relative">2^-4 * 3^4 * 5^-1</code> (see
     expressions below).
   </p>
+  <h3>Pythagorean</h3>
+  <p>
+    Pythagorean intervals such as the perfect fourth <code @click="relative">P4</code> are
+    constructed by multiplying powers of two and three so <code @click="relative">16/9</code> i.e.
+    <code @click="relative">2^4 * 3^-2</code> is a Pythagorean interval but
+    <code @click="relative">5/4</code> is not because it contains a factor of five.
+  </p>
+  <p>
+    They form a chain of fifths going from diminished (negative three's exponent) to augmented
+    (positive three's exponent):
+    <code @click="pythagoras">..., d5, m2, m6, m3, m7, P4, P1, P5, M2, M6, M3, M7, A4, ...</code>
+  </p>
+  <p>
+    If you're coming from 12-tone equal temperament you may already be familiar with this notation.
+    Just tag a <code @click="twelveTone">12@</code> at the end of your sorted scale and you're right
+    at home.
+  </p>
   <h3>FJS</h3>
-  <p>TODO</p>
-  <h3>Absolute FJS</h3>
-  <p>TODO: Absolute pitches require a declaration of the root pitch at the first line.</p>
+  <p>
+    The <a href="https://en.xen.wiki/w/Functional_Just_System">Functional Just System</a> extends
+    Pythagorean notation using microtonal accidentals that move from the <i>spine</i> of fifths to
+    higher primes. e.g. the major third <code @click="relative">M3</code> =
+    <code @click="relative">81/64</code> is fairly complex as a ratio but the 5-limit major third is
+    much simpler <code @click="relative">M3^5</code> = <code @click="relative">5/4</code>.
+  </p>
+  <p>
+    Note that in FJS the accidentals signify where the higher primes are in the fraction. The
+    superscript 5 actually goes down in pitch while the subscript 5 goes up in pitch. Compare
+    <code @click="relative">m3</code> with <code @click="relative">m3_5</code>.
+  </p>
+  <h3>Absolute pitches</h3>
+  <p>
+    Pythagorean notation extends to absolute pitches like <code @click="relative">C4</code> where
+    the nominal determines where in the chain of fifths we are and the number counts the octaves
+    i.e. B6 is two octaves higher than B4.
+  </p>
+  <p>
+    Instead of becoming augmented absolute pitches acquire accidentals:<br />
+    <code @click="relative">C#4</code> is the same as
+    <code @click="relative">C4 + A1</code> and<br />
+    <code @click="relative">Cb4</code> is the same as <code @click="relative">C4 + d1</code>.
+  </p>
+  <p>
+    It is an unfortunate bug of this common notation that <i>"A of octave 4"</i> and
+    <i>"augmented fourth"</i> collide. To get around it you can write this nominal in lower case
+    <code @click="relative">a4</code> or with a natural sign <code @click="relative">A=4</code>.
+  </p>
+  <p>
+    Note that absolute pitches require a declaration of the root pitch on the first line:
+    <code @click="frequency">A4 = 420 Hz</code> (A4 is unambiguously a pitch here)
+  </p>
+  <p>
+    FJS accidental are supported with absolute pitches. e.g.
+    <code @click="absoluteFJS">Bb4^7</code> is <code @click="relative">7/4</code> above C4.
+  </p>
   <h3>Comments</h3>
   <p>
     Everything after two slashes is ignored.
@@ -172,13 +254,40 @@ function relative(event: MouseEvent) {
     frequencies and produces ratios <code @click="relative">500Hz ÷ 400Hz</code>
   </p>
   <h3>Exponentiation</h3>
-  <p>TODO</p>
-  <h3>Modulus</h3>
-  <p>TODO</p>
+  <p>
+    Repeated multiplication can be expressed using the caret symbol '^'. e.g.
+    <code @click="relative">2*2*2</code> = <code @click="relative">2^3</code>
+  </p>
+  <p>
+    Exponentiation has a higher precedence than multiplication or division
+    <code @click="relative">3^2 % 2^3</code> = <code @click="relative">9/8</code>
+  </p>
+  <p>
+    Note that in SonicWeave slash division binds stronger than exponentiation so
+    <code @click="relative">3^1/2</code> is the square root of three.
+  </p>
+  <h3>Modulo</h3>
+  <p>
+    The remainder after division is notated 'mod' and placed between the dividend and the divisor.
+    e.g.
+    <code @click="relative">7 mod 4</code> = <code @click="relative">3</code>.
+  </p>
+  <p>
+    Modulo in pitch space is useful for octave reduction. e.g.
+    <code @click="relative">(P5 + P5 + P5) mod P8</code> = <code @click="relative">M6</code>
+  </p>
   <h3>Equave reduction</h3>
-  <p>TODO</p>
+  <p>
+    To get the same behaviour with scalars you have to call it 'reduce'. e.g.
+    <code @click="relative">(3 * 3 * 3) reduce 2</code> = <code @click="relative">27/16</code>.
+  </p>
   <h3>Unary operators</h3>
-  <p>TODO</p>
+  <p>
+    The minus sign negates: <code @click="relative">-P4</code> =
+    <code @click="relative">P5 - P8</code> and <br />
+    the percent sign inverts: <code @click="relative">%2</code> =
+    <code @click="relative">1/2</code>.
+  </p>
   <h3>Functions</h3>
   <p>TODO</p>
 
