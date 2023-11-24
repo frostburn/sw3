@@ -15,6 +15,10 @@ h3 {
   text-decoration: underline;
   font-size: 1.1em;
 }
+h4 {
+  text-decoration: underline;
+  font-size: 1.01em;
+}
 b {
   font-weight: bold;
 }

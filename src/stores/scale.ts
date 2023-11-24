@@ -1,7 +1,8 @@
 import { midiNoteNumberToEnharmonics } from '@/utils'
 import { defineStore } from 'pinia'
 import { Scale, parseLines, parseScale } from 'scale-workshop-core'
-import { Quantity, pitch } from 'scale-workshop-core/dist/quantity' // TODO: Fix exports, check that scientific notation is supported
+// TODO: Fix exports, check that scientific notation is supported, HardDecimal, power, modmul -> reduce = operator, 10ms
+import { Quantity, pitch } from 'scale-workshop-core/dist/quantity'
 import { computed, reactive, ref, watch } from 'vue'
 
 export const useScaleStore = defineStore('scale', () => {
