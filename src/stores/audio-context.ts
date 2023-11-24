@@ -149,6 +149,11 @@ export const useAudioContextStore = defineStore('audio-context', () => {
     decayTime,
     sustainLevel,
     releaseTime,
-    synth
+    synth,
+
+    // Add to state but not intended for mutation
+    mainGain,
+    mainLowpass,
+    mainHighpass
   }
 })

@@ -1,40 +1,21 @@
 <script setup lang="ts">
-import { computed, reactive, ref, watch } from 'vue'
-import { midiNoteNumberToEnharmonics } from '@/utils'
 import { useScaleStore } from '@/stores/scale'
 
 const scale = useScaleStore()
 
-// TODO: Move to a store
-const scaleName = ref('')
-const enharmonics = ref(midiNoteNumberToEnharmonics(scale.scale.baseMidiNote))
-const enharmonic = ref(enharmonics.value[0])
-const autoFrequency = ref(true)
-const scaleLines = reactive(['440Hz', 'P8'])
-
-const autoLine = computed(() => `${enharmonic.value} = mtof(${scale.scale.baseMidiNote})`)
-
-watch(
-  () => scale.scale.baseMidiNote,
-  (newValue) => {
-    enharmonics.value = midiNoteNumberToEnharmonics(newValue)
-    enharmonic.value = enharmonics.value[0]
-  }
-)
-
 function lol5edo() {
-  scaleName.value = 'Budget split fourths'
-  scaleLines.length = 1
+  scale.name = 'Budget split fourths'
+  scale.lines.length = 1
   for (let i = 1; i <= 5; ++i) {
-    scaleLines.push(`${i}\\5`)
+    scale.lines.push(`${i}\\5`)
   }
 }
 
 function lmao5ten() {
-  scaleName.value = 'Otonal pentatonic'
-  scaleLines.length = 1
+  scale.name = 'Otonal pentatonic'
+  scale.lines.length = 1
   for (let i = 6; i <= 10; ++i) {
-    scaleLines.push(`${i}/5`)
+    scale.lines.push(`${i}/5`)
   }
 }
 </script>
@@ -46,7 +27,7 @@ function lmao5ten() {
         id="scale-name"
         rows="1"
         placeholder="Untitled scale"
-        v-model="scaleName"
+        v-model="scale.name"
       ></textarea>
 
       <ul class="btn-group">
@@ -69,16 +50,16 @@ function lmao5ten() {
       <div class="control-group">
         <div class="control">
           <label for="base-midi-note">MIDI note for base frequency</label>
-          <input id="base-midi-note" type="number" step="1" v-model="scale.scale.baseMidiNote" />
+          <input id="base-midi-note" type="number" step="1" v-model="scale.baseMidiNote" />
         </div>
         <div class="control">
           <label for="enharmonic">Pythagorean enharmonic</label>
-          <select id="enharmonic" v-model="enharmonic" :disabled="!autoFrequency">
-            <option v-for="e of enharmonics" :key="e" :value="e">{{ e }}</option>
+          <select id="enharmonic" v-model="scale.enharmonic" :disabled="!scale.autoFrequency">
+            <option v-for="e of scale.enharmonics" :key="e" :value="e">{{ e }}</option>
           </select>
         </div>
         <div class="control checkbox-container">
-          <input id="auto-frequency" type="checkbox" v-model="autoFrequency" /><label
+          <input id="auto-frequency" type="checkbox" v-model="scale.autoFrequency" /><label
             for="auto-frequency"
             >Automatic base frequency</label
           >
@@ -88,14 +69,18 @@ function lmao5ten() {
       <div class="control-group">
         <h2>Scale data</h2>
         <div class="control">
-          <input v-if="autoFrequency" type="text" :value="autoLine" disabled />
-          <input v-else type="text" v-model="scaleLines[0]" />
+          <input v-if="scale.autoFrequency" type="text" :value="scale.autoLine" disabled />
+          <input v-else type="text" v-model="scale.lines[0]" />
         </div>
-        <div class="control" v-for="i of scaleLines.length - 1" :key="i">
-          <input type="text" v-model="scaleLines[i]" />
-          <span v-if="i > 1" class="delete" @click="scaleLines.splice(i, 1)"></span>
+        <div class="control" v-for="i of scale.lines.length - 2" :key="i">
+          <input type="text" v-model="scale.lines[i]" />
+          <span class="delete" @click="scale.lines.splice(i, 1)"></span>
         </div>
-        <button @click="scaleLines.push('')">+</button>
+        <button @click="scale.lines.splice(-1, 0, '')">+</button>
+        <div class="control">
+          <input type="text" v-model="scale.lines[scale.lines.length - 1]" />
+        </div>
+        <p class="error">{{ scale.error }}</p>
       </div>
     </div>
   </div>

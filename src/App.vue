@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref, watch } from 'vue'
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import { RouterLink, RouterView } from 'vue-router'
 import { useAudioContextStore } from './stores/audio-context'
 import { Keyboard, type CoordinateKeyboardEvent } from '@/keyboard'
@@ -15,13 +15,15 @@ const isomorphicHorizontal = ref(1)
 const isomorphicVertical = ref(7)
 const typingActive = ref(false)
 
+const frequencies = computed(() => scale.scale.getFrequencyRange(0, 128))
+
 function emptyKeyup() {}
 
 function keyboardNoteOn(index: number) {
   if (!audioContext.synth) {
     return emptyKeyup
   }
-  return audioContext.synth.noteOn(440 * 2 ** ((index - scale.scale.baseMidiNote) / 12), 0.8)
+  return audioContext.synth.noteOn(frequencies.value[index], 0.9)
 }
 
 // === Typing keyboard state ===
