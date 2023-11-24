@@ -175,6 +175,8 @@ function relative(event: MouseEvent) {
   <p>TODO</p>
   <h3>Modulus</h3>
   <p>TODO</p>
+  <h3>Equave reduction</h3>
+  <p>TODO</p>
   <h3>Unary operators</h3>
   <p>TODO</p>
   <h3>Functions</h3>
@@ -187,6 +189,8 @@ function relative(event: MouseEvent) {
   <p>TODO</p>
 
   <h2>Advanced types</h2>
+  <h3>Context variables</h3>
+  <p>TODO</p>
   <h3>Vals</h3>
   <p>TODO</p>
   <h3>Warts</h3>
@@ -205,7 +209,8 @@ function relative(event: MouseEvent) {
   <h3>Seconds</h3>
   <p>
     Under the hood SW3 has support for all time domain quantities. e.g.
-    <code @click="frequency">10 ms</code> is equal to <code @click="frequency">100 Hz</code>.
+    <code @click="frequency">10 ms</code> is implicitly converted to
+    <code @click="frequency">100 Hz</code> when used as a base frequency.
   </p>
   <h3>Inverse cents</h3>
   <p>
