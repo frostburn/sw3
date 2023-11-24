@@ -52,6 +52,86 @@ function absoluteFJS() {
   scale.lines.push('Bb4^7')
   scale.lines.push('C5')
 }
+
+function equalBeats() {
+  scale.name = 'Equally beating major seventh chord'
+  scale.autoFrequency = true
+  scale.lines.length = 0
+  scale.lines.push('440 Hz')
+  scale.lines.push('frequency(M3^5) + 1Hz')
+  scale.lines.push('frequency(P5) - 1Hz')
+  scale.lines.push('frequency(M7^5) + 0Hz')
+  scale.lines.push('frequency(P8) + 1Hz')
+}
+
+function deltaRational() {
+  scale.name = 'Delta-rational semifourth'
+  scale.autoFrequency = true
+  scale.lines.length = 0
+  scale.lines.push('440 Hz')
+  scale.lines.push('ratio(P4 % 2) + 0/6')
+  scale.lines.push('ratio(P4 % 2) + 1/6')
+  scale.lines.push('ratio(P4 % 2) + 2/6')
+  scale.lines.push('ratio(P4 % 2) + 3/6')
+  scale.lines.push('ratio(P4 % 2) + 4/6')
+  scale.lines.push('P8')
+}
+
+function lyman() {
+  scale.name = 'Octave reduced hydrogen Lyman series'
+  scale.autoFrequency = false
+  scale.lines.length = 0
+  scale.lines.push('nmtof(121.56701) * 2^-42')
+  scale.lines.push('nmtof(102.57220) * 2^-42')
+  scale.lines.push('nmtof(97.253650) * 2^-42')
+  scale.lines.push('nmtof(94.974287) * 2^-42')
+  scale.lines.push('nmtof(93.780331) * 2^-42')
+  scale.lines.push('nmtof(93.0748142) * 2^-42')
+  scale.lines.push('nmtof(92.6225605) * 2^-42')
+  scale.lines.push('nmtof(92.3150275) * 2^-42')
+  scale.lines.push('nmtof(92.0963006) * 2^-42')
+  scale.lines.push('nmtof(91.9351334) * 2^-42')
+  scale.lines.push('nmtof(91.1753)  * 2^-42 // Lyman limit')
+}
+
+function syntonic() {
+  scale.name = '5-limit minor using a variable'
+  scale.autoFrequency = true
+  scale.lines.length = 0
+  scale.lines.push('440 Hz')
+  scale.lines.push('$syntonic = pitch(9/8 % 10/9)')
+  scale.lines.push('m3 + $syntonic')
+  scale.lines.push('P5')
+  scale.lines.push('m7 + $syntonic')
+  scale.lines.push('P8')
+}
+
+function reduce() {
+  scale.name = 'Fives against a double octave'
+  scale.autoFrequency = true
+  scale.lines.length = 0
+  scale.lines.push('440 Hz')
+  scale.lines.push('5')
+  scale.lines.push('5^2')
+  scale.lines.push('5^3')
+  scale.lines.push('5^4')
+  scale.lines.push('5^5')
+  scale.lines.push('= $ reduce 4')
+  scale.lines.push('4')
+}
+
+function semiquartals() {
+  scale.name = 'Semiquartals'
+  scale.autoFrequency = true
+  scale.lines.length = 0
+  scale.lines.push('440 Hz')
+  scale.lines.push('n4.5')
+  scale.lines.push('n1.5')
+  scale.lines.push('n5.5 // P4 * 3/2')
+  scale.lines.push('n2.5 // P4 % 2')
+  scale.lines.push('n6.5 // P12 % 2')
+  scale.lines.push('n3.5')
+}
 </script>
 <template>
   <h1>Welcome to Scale Workshop 3</h1>
@@ -196,10 +276,12 @@ function absoluteFJS() {
   <p>
     Pythagorean notation extends to absolute pitches like <code @click="relative">C4</code> where
     the nominal determines where in the chain of fifths we are and the number counts the octaves
-    i.e. <code @click="relative">B5</code> is two octaves higher than <code @click="relative">B3</code>.
+    i.e. <code @click="relative">B5</code> is two octaves higher than
+    <code @click="relative">B3</code>.
   </p>
   <p>
-    Due to a historical quirk instead of going alphabetically the octaves begin at C and go D, E, F, G, A and B before starting the next octave.
+    Due to a historical quirk instead of going alphabetically the octaves begin at C and go D, E, F,
+    G, A and B before starting the next octave.
   </p>
   <p>
     Instead of becoming augmented absolute pitches acquire accidentals:<br />
@@ -269,6 +351,8 @@ function absoluteFJS() {
     Note that in SonicWeave slash division binds stronger than exponentiation so
     <code @click="relative">3^1/2</code> is the square root of three.
   </p>
+  <h3>Logarithm</h3>
+  <p>TODO</p>
   <h3>Modulo</h3>
   <p>
     The remainder after division is notated 'mod' and placed between the dividend and the divisor.
@@ -296,15 +380,54 @@ function absoluteFJS() {
     <code @click="frequency">-440 Hz</code> ~ <code @click="frequency">440 Hz</code>
   </p>
   <h3>Functions</h3>
-  <p>TODO</p>
-
+  <p>At this point SonicWeave comes with only a handful of functions.</p>
+  <p>
+    Converting values to frequency is handy for building equally beating scales
+    <code @click="equalBeats">frequency(P5) - 1Hz, ...</code>.
+  </p>
+  <p>
+    Converting values to ratios allows you to build delta-rational scales
+    <code @click="deltaRational">ratio(P4 % 2) + 1/6, ...</code>.
+  </p>
+  <p>
+    Converting values to pitches allows you to add them to other pitches
+    <code @click="relative">M3 - pitch(81/80)</code>.
+  </p>
+  <p>
+    MIDI-to-frequency converts scalars to frequencies of 12-tone equal temperament with A4 = 440 Hz
+    <code @click="relative">mtof(69)</code>.
+  </p>
+  <p>
+    Frequency-to-MIDI does the reverse <code @click="relative">ftom(11 Hz)</code> (not so useful by
+    itself).
+  </p>
+  <p>
+    Converting nanometers to frequency is used to stress test the system with atomic spectra
+    <code @click="lyman">nmtof(121.56701)</code>.
+  </p>
+  <p>
+    Then there's the square root <code @click="relative">sqrt(4/3)</code> and<br />
+    the cube root <code @click="relative">cbrt(3/2)</code>.
+  </p>
   <h2>Declarations</h2>
   <h3>Variable declaration</h3>
-  <p>TODO: You can declare custom variables. TODO: Variables can be accessed by name.</p>
+  <p>
+    You can declare custom variables using dollar sign '$' syntax
+    <code @click="syntonic">$syntonic = pitch(9/8 % 10/9)</code>
+  </p>
+  <h4>Variable access</h4>
+  <p>
+    You cab access declared variables by name using corresponding dollar sign '$' syntax
+    <code @click="syntonic">m3 + $syntonic</code>
+  </p>
   <h3>Map declaration</h3>
-  <p>TODO</p>
+  <p>
+    You can map over all of the intervals so far by omitting the dollar sign and using an empty
+    variable name on the right hand side:
+    <code @click="reduce">= $ reduce 4</code>
+  </p>
 
-  <h2>Advanced types</h2>
+  <h2>Advanced topics</h2>
   <h3>Context variables</h3>
   <p>TODO</p>
   <h3>Vals</h3>
@@ -317,7 +440,12 @@ function absoluteFJS() {
   <p>TODO</p>
   <h3>Interordinals</h3>
   <h4>Semiquartals</h4>
-  <p>TODO</p>
+  <p>
+    The perfect fourth spans an odd number of steps so splitting it moves us to interordinal
+    territory. The offset chain of fifths is
+    <code>n2.5, n6.5</code>
+  </p>
+  <p>I love the sound of the split fourth so consider this extension my personal indulgence.</p>
   <h4>Semioctals</h4>
   <p>TODO</p>
   <h3>Quarter-augmented intervals</h3>
