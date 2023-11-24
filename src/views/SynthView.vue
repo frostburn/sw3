@@ -135,6 +135,11 @@ const releaseTime = computed({
           </div>
         </div>
       </div>
+      <div class="column">
+        <h1>very alpha</h1>
+        <p>such semiquartals</p>
+        <i>wow</i>
+      </div>
     </div>
   </main>
 </template>

@@ -1,7 +1,8 @@
 import { defineStore } from 'pinia'
+import { reactive } from 'vue'
 
 export const useScaleStore = defineStore('scale', () => {
-  const scale = { size: 12 }
+  const scale = reactive({ size: 12, baseMidiNote: 60 })
 
   return { scale }
 })

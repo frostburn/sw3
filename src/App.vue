@@ -9,7 +9,6 @@ const audioContext = useAudioContextStore()
 const scale = useScaleStore()
 
 const colorScheme = ref<'light' | 'dark'>('light')
-const baseMidiNote = ref(60)
 const equaveShift = ref(0)
 const degreeShift = ref(0)
 const isomorphicHorizontal = ref(1)
@@ -22,7 +21,7 @@ function keyboardNoteOn(index: number) {
   if (!audioContext.synth) {
     return emptyKeyup
   }
-  return audioContext.synth.noteOn(440 * 2 ** ((index - baseMidiNote.value) / 12), 0.8)
+  return audioContext.synth.noteOn(440 * 2 ** ((index - scale.scale.baseMidiNote) / 12), 0.8)
 }
 
 // === Typing keyboard state ===
@@ -85,7 +84,7 @@ function typingKeydown(event: CoordinateKeyboardEvent) {
     return emptyKeyup
   }
 
-  let index = baseMidiNote.value + scale.scale.size * equaveShift.value
+  let index = scale.scale.baseMidiNote + scale.scale.size * equaveShift.value
 
   index += degreeShift.value + x * isomorphicHorizontal.value + (2 - y) * isomorphicVertical.value
 

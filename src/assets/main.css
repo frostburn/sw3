@@ -57,6 +57,13 @@ select:invalid {
 select:invalid {
   background-color: var(--color-background-invalid);
 }
+input[type='checkbox'] {
+  margin-right: 0.5rem;
+}
+input:disabled {
+  color: var(--color-accent-mute);
+  background-color: var(--color-background-mute);
+}
 
 /* UI elements - button, button group */
 .btn-group {
