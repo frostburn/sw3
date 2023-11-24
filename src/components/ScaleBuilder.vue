@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useScaleStore } from '@/stores/scale'
+import TutorialExamples from './TutorialExamples.vue'
 
 const scale = useScaleStore()
 
@@ -83,6 +84,9 @@ function lmao5ten() {
         <p class="error">{{ scale.error }}</p>
       </div>
     </div>
+    <div class="column big">
+      <TutorialExamples />
+    </div>
   </div>
 </template>
 
@@ -92,12 +96,14 @@ div.columns-container {
   height: 100%;
   overflow-y: auto;
   background-color: var(--color-border);
+  display: flex;
 }
 div.column {
   background-color: var(--color-background);
   overflow-x: hidden;
 }
 div.scale-builder {
+  flex: 2;
   padding: 1rem;
 }
 div.tuning-table {
@@ -118,7 +124,6 @@ div.exporters {
     overflow-y: auto;
   }
   div.scale-builder {
-    width: 100%;
     height: 100%;
   }
   div.tuning-table {
@@ -135,7 +140,7 @@ div.exporters {
 /* Content layout (large) */
 @media screen and (min-width: 1100px) {
   div.columns-container {
-    column-count: 3;
+    column-count: 2;
   }
   div.column {
     height: 100%;
@@ -172,5 +177,10 @@ select optgroup + optgroup {
 .delete::after {
   cursor: pointer;
   content: '🗑';
+}
+
+.big {
+  padding: 0.7rem;
+  flex: 3;
 }
 </style>
