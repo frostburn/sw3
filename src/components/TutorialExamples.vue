@@ -196,7 +196,10 @@ function absoluteFJS() {
   <p>
     Pythagorean notation extends to absolute pitches like <code @click="relative">C4</code> where
     the nominal determines where in the chain of fifths we are and the number counts the octaves
-    i.e. B6 is two octaves higher than B4.
+    i.e. <code @click="relative">B5</code> is two octaves higher than <code @click="relative">B3</code>.
+  </p>
+  <p>
+    Due to a historical quirk instead of going alphabetically the octaves begin at C and go D, E, F, G, A and B before starting the next octave.
   </p>
   <p>
     Instead of becoming augmented absolute pitches acquire accidentals:<br />
@@ -287,6 +290,10 @@ function absoluteFJS() {
     <code @click="relative">P5 - P8</code> and <br />
     the percent sign inverts: <code @click="relative">%2</code> =
     <code @click="relative">1/2</code>.
+  </p>
+  <p>
+    All by themselves negative frequencies are not that interesting as they sound the same:
+    <code @click="frequency">-440 Hz</code> ~ <code @click="frequency">440 Hz</code>
   </p>
   <h3>Functions</h3>
   <p>TODO</p>
