@@ -133,6 +133,7 @@ const releaseTime = computed({
               v-model="audioContext.maxPolyphony"
             />
           </div>
+          <button @click="audioContext.synth?.allNotesOff()">Panic</button>
         </div>
       </div>
       <div class="column">
@@ -180,5 +181,9 @@ div.keyboard-controls {
   height: auto;
   border: 1px solid var(--color-border);
   border-radius: 5px;
+}
+
+button {
+  margin-top: 1em;
 }
 </style>

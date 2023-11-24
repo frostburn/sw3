@@ -41,8 +41,8 @@ function lmao5ten() {
         <li class="btn-dropdown-group">
           <a class="btn" href="#">Modify scale ▼</a>
           <ul>
-            <a href="#"><li>Sort ascending</li></a>
-            <a href="#"><li>Reduce</li></a>
+            <a href="#" @click="scale.sort"><li>Sort ascending</li></a>
+            <a href="#" @click="scale.reduce"><li>Reduce</li></a>
           </ul>
         </li>
       </ul>
