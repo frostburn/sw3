@@ -37,9 +37,7 @@ function pythagoras() {
 
 function twelveTone() {
   scale.name = '12-tone equal temperament'
-  scale.autoFrequency = true
-  scale.lines.length = 0
-  scale.lines.push('440 Hz')
+  _relative()
   for (const input of 'm2,M2,m3,M3,P4,A4,P5,m6,M6,m7,M7,12@'.split(',')) {
     scale.lines.push(input)
   }
@@ -56,21 +54,17 @@ function absoluteFJS() {
 }
 
 function equalBeats() {
-  scale.name = 'Equally beating major seventh chord'
-  scale.autoFrequency = true
-  scale.lines.length = 0
-  scale.lines.push('440 Hz')
-  scale.lines.push('frequency(M3^5) + 1Hz')
-  scale.lines.push('frequency(P5) - 1Hz')
-  scale.lines.push('frequency(M7^5) + 0Hz')
-  scale.lines.push('frequency(P8) + 1Hz')
+  scale.name = 'Equally beating minor seventh chord'
+  _relative()
+  scale.lines.push('(frequency(6) - 1Hz) % 5')
+  scale.lines.push('(frequency(3) - 1Hz) % 2')
+  scale.lines.push('(frequency(9) - 1Hz) % 5')
+  scale.lines.push('frequency(2) + 1Hz')
 }
 
 function deltaRational() {
   scale.name = 'Delta-rational semifourth'
-  scale.autoFrequency = true
-  scale.lines.length = 0
-  scale.lines.push('440 Hz')
+  _relative()
   scale.lines.push('ratio(P4 % 2) + 0/6')
   scale.lines.push('ratio(P4 % 2) + 1/6')
   scale.lines.push('ratio(P4 % 2) + 2/6')
@@ -98,9 +92,7 @@ function lyman() {
 
 function syntonic() {
   scale.name = '5-limit minor using a variable'
-  scale.autoFrequency = true
-  scale.lines.length = 0
-  scale.lines.push('440 Hz')
+  _relative()
   scale.lines.push('$syntonic = pitch(9/8 % 10/9)')
   scale.lines.push('m3 + $syntonic')
   scale.lines.push('P5')
@@ -110,9 +102,7 @@ function syntonic() {
 
 function reduce() {
   scale.name = 'Fives against a double octave'
-  scale.autoFrequency = true
-  scale.lines.length = 0
-  scale.lines.push('440 Hz')
+  _relative()
   scale.lines.push('5')
   scale.lines.push('5^2')
   scale.lines.push('5^3')
@@ -141,11 +131,93 @@ function superwhole() {
   scale.lines.push('2')
 }
 
+function contextHarmonics() {
+  scale.name = 'Harmonics 7-14 using context'
+  _relative()
+  scale.lines.push('($# + 7) % 7')
+  scale.lines.push('($# + 7) % 7')
+  scale.lines.push('($# + 7) % 7')
+  scale.lines.push('($# + 7) % 7')
+  scale.lines.push('($# + 7) % 7')
+  scale.lines.push('($# + 7) % 7')
+  scale.lines.push('($# + 7) % 7')
+}
+
+function movableDo() {
+  scale.name = 'Movable-do on base MIDI note'
+  scale.autoFrequency = false
+  scale.lines.length = 0
+  scale.lines.push('C0 = mtof($##)')
+  scale.lines.push('D0')
+  scale.lines.push('E0')
+  scale.lines.push('F0')
+  scale.lines.push('G0')
+  scale.lines.push('A0')
+  scale.lines.push('B0')
+  scale.lines.push('C1')
+}
+
+function _minorPentatonic() {
+  _relative()
+  scale.lines.push('m3')
+  scale.lines.push('P4')
+  scale.lines.push('P5')
+  scale.lines.push('m7')
+}
+
+function explicitPentatonic31() {
+  scale.name = 'Minor pentatonic in 31edo'
+  _minorPentatonic()
+  scale.lines.push('= 31@ * pitch($) * \\31')
+  scale.lines.push('P8')
+}
+
+function implicitPentatonic31() {
+  scale.name = 'Minor pentatonic in 31edo'
+  _minorPentatonic()
+  scale.lines.push('31@')
+  scale.lines.push('P8')
+}
+
+function prime6p() {
+  scale.name = 'Failed 5:8:9:10 in 6edo'
+  _relative()
+  scale.lines.push('8/5')
+  scale.lines.push('9/5 // Failure: Too high')
+  scale.lines.push('6@')
+  scale.lines.push('10/5')
+}
+
+function prime6b() {
+  scale.name = 'Failed 5:8:9:10 in 6b'
+  _relative()
+  scale.lines.push('8/5')
+  scale.lines.push('9/5 // Failure: Too low')
+  scale.lines.push('6b@')
+  scale.lines.push('10/5')
+}
+
+function prime6bb() {
+  scale.name = 'Failed 5:8:9:10 in 6bb'
+  _relative()
+  scale.lines.push('8/5')
+  scale.lines.push('9/5 // Failure: Way too high!')
+  scale.lines.push('6bb@')
+  scale.lines.push('10/5')
+}
+
+function subgroup6() {
+  scale.name = '5:8:9:10 in 6edo'
+  _relative()
+  scale.lines.push('8/5')
+  scale.lines.push('9/5 // Success!')
+  scale.lines.push('6@2.9.5')
+  scale.lines.push('10/5')
+}
+
 function neutrals() {
   scale.name = 'Neutral Pythagorean'
-  scale.autoFrequency = true
-  scale.lines.length = 0
-  scale.lines.push('440 Hz')
+  _relative()
   scale.lines.push('sd1 // [5.5 -3.5>')
   scale.lines.push('sd5 // [4.5 -2.5>')
   scale.lines.push('n2 // [2.5 -1.5>')
@@ -157,7 +229,7 @@ function neutrals() {
   scale.lines.push('P8')
 }
 
-function neutralAbsolute_() {
+function _neutralAbsolute() {
   scale.autoFrequency = false
   scale.lines.length = 0
   scale.lines.push('C4 = 261.63Hz')
@@ -171,29 +243,27 @@ function neutralAbsolute_() {
 
 function neutralAbsolute() {
   scale.name = 'Neutral absolute Pythagorean'
-  neutralAbsolute_()
+  _neutralAbsolute()
   scale.lines.push('C5')
 }
 
 function neutral17() {
   scale.name = '17edo 3L4s'
-  neutralAbsolute_()
+  _neutralAbsolute()
   scale.lines.push('17@')
   scale.lines.push('C5')
 }
 
 function neutral5() {
   scale.name = '10edo! 3L4s'
-  neutralAbsolute_()
+  _neutralAbsolute()
   scale.lines.push("5@ // Bad practice, 5edo doesn't have a split fifth!")
   scale.lines.push('C5')
 }
 
 function tonesplitters() {
   scale.name = 'Tonesplitters'
-  scale.autoFrequency = true
-  scale.lines.length = 0
-  scale.lines.push('440 Hz')
+  _relative()
   scale.lines.push('sd2.5 // [6.5 -4>')
   scale.lines.push('n6.5 // [5.5 -3>')
   scale.lines.push('n3.5 // [3.5 -2>')
@@ -208,9 +278,7 @@ function tonesplitters() {
 
 function semiquartals() {
   scale.name = 'Semiquartals'
-  scale.autoFrequency = true
-  scale.lines.length = 0
-  scale.lines.push('440 Hz')
+  _relative()
   scale.lines.push('d2.5 // [12 -7.5>')
   scale.lines.push('m6.5 // [11 -6.5>')
   scale.lines.push('m3.5 // [9 -5.5>')
@@ -483,7 +551,7 @@ function semiquartals() {
   <p>At this point SonicWeave comes with only a handful of functions.</p>
   <p>
     Converting values to frequency is handy for building equally beating scales
-    <code @click="equalBeats">frequency(P5) - 1Hz, ...</code>.
+    <code @click="equalBeats">(frequency(6) - 1Hz) % 5, ...</code>.
   </p>
   <p>
     Converting values to ratios allows you to build delta-rational scales
@@ -507,7 +575,7 @@ function semiquartals() {
   </p>
   <p>
     Then there's the square root <code @click="relative">sqrt(4/3)</code> and<br />
-    the cube root <code @click="relative">cbrt(3/2)</code>.
+    the cube root <code @click="relative">cbrt(3)</code>.
   </p>
   <h2>Declarations</h2>
   <h3>Variable declaration</h3>
@@ -522,7 +590,7 @@ function semiquartals() {
   </p>
   <h3>Map declaration</h3>
   <p>
-    You can map over all of the intervals so far by omitting the dollar sign and using an empty
+    You can map over all of the previous intervals by omitting the left hand side and using an empty
     variable name on the right hand side:
     <code @click="reduce">= $ reduce 4</code>
   </p>
@@ -540,15 +608,63 @@ function semiquartals() {
     <code @click="superwhole">$-1 * 8/7</code>.
   </p>
   <h4>Current index</h4>
-  <p>TODO</p>
+  <p>
+    The index of the current line is stored in '$#' which makes it easy to e.g. create harmonic
+    segments: <code @click="contextHarmonics">($# + 7) % 7</code>
+  </p>
   <h4>Current MIDI note</h4>
-  <p>TODO</p>
+  <p>
+    The MIDI note corresponding to the line is stored in '$##' which e.g. makes movable-do systems
+    possible: <code @click="movableDo">C0 = mtof($##), ...</code>
+  </p>
   <h3>Vals</h3>
-  <p>TODO</p>
+  <p>
+    Vals are used to map monzos and other pitch-space quantities to step counts. e.g.
+    <code @click="relative">&lt;5, 8] * [2, -1&gt;</code> =
+    <code @click="relative">5*2 + 8*(-1)</code> = <code @click="relative">2</code>.
+  </p>
   <h3>Warts</h3>
-  <p>TODO</p>
+  <p>
+    <a href="https://en.xen.wiki/w/Val#Shorthand_notation">Wart notation</a> makes it easy to create
+    vals corresponding to equal temperaments. SonicWeave uses an at sign '@' at the end of the wart
+    notation to tell warts apart from other quantities.
+  </p>
+  <p>
+    For example, we can (harmonically consistently) measure how many steps
+    <code @click="relative">15/8</code>
+    is in 12-tone equal temperament and multiply the step count with the step size
+    <code @click="relative">12@ * pitch(15/8) * 1\12</code> =
+    <code @click="relative">&lt;12 19 28] * [-3 1 1&gt; * 100 c</code>.
+  </p>
   <h4>Implicit tempering</h4>
-  <p>TODO</p>
+  <p>
+    Vals are mostly used to temper (i.e. map over) all of the intervals in the scale using this
+    types of formulae
+    <code @click="explicitPentatonic31">= 31@ * pitch($) * \31</code>.
+  </p>
+  <p>
+    Vals by themselves cannot be interpreted as pitches so the formula is used implicitly when a
+    line produces a val. The previous example can simply be written as
+    <code @click="implicitPentatonic31">31@</code>
+  </p>
+  <h4>Explicit subgroup</h4>
+  <p>
+    Sometimes an equal temperament has great approximation to a prime ratio but the primes
+    themselves cannot be approximated in a way that maps the ratio to the desired step count. In
+    these cases you need to be explicit about the subgroup used to compute the val.
+  </p>
+  <p>
+    Let's look at 6edo. It's basically the whole-tone scale as a subset of 12edo so it has a great
+    <code @click="relative">9/8</code> and a decent <code @click="relative">5/4</code> while
+    completely lacking anything resembling a <code @click="relative">3/2</code>.
+  </p>
+  <p>
+    You will find it impossible to temper the scale 5:8:9:10 in 6edo directly. None of these do the
+    job:
+    <code @click="prime6p">6@</code>, <code @click="prime6b">6b@</code> or
+    <code @click="prime6bb">6bb@</code>.
+  </p>
+  <p>To succeed we must use the subgroup 2.9.5: <code @click="subgroup6">6@2.9.5</code>.</p>
   <h3>Neutral Pythagorean</h3>
   <p>
     The ordinal notation for the perfect fifth <code @click="relative">P5</code> masks the fact that
