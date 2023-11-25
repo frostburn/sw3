@@ -120,17 +120,61 @@ function reduce() {
   scale.lines.push('4')
 }
 
+function neutrals() {
+  scale.name = 'Neutral Pythagorean'
+  scale.autoFrequency = true
+  scale.lines.length = 0
+  scale.lines.push('440 Hz')
+  scale.lines.push('sd1 // [5.5 -3.5>')
+  scale.lines.push('sd5 // [4.5 -2.5>')
+  scale.lines.push('n2 // [2.5 -1.5>')
+  scale.lines.push('n6 // [1.5 -0.5> = P11 % 2')
+  scale.lines.push('n3 // [-0.5 0.5> = P5 % 2')
+  scale.lines.push('n7 // [-1.5 1.5> = P5 * 3/2')
+  scale.lines.push('sA4 // [-3.5 2.5>')
+  scale.lines.push('sA1 // [-5.5 3.5>')
+  scale.lines.push('P8')
+}
+
+function tonesplitters() {
+  scale.name = 'Tonesplitters'
+  scale.autoFrequency = true
+  scale.lines.length = 0
+  scale.lines.push('440 Hz')
+  scale.lines.push('sd2.5 // [6.5 -4>')
+  scale.lines.push('n6.5 // [5.5 -3>')
+  scale.lines.push('n3.5 // [3.5 -2>')
+  scale.lines.push('n7.5 // [2.5 -1>')
+  scale.lines.push('n4.5 // [0.5 0> = P8 % 2')
+  scale.lines.push('n1.5 // [-1.5 1> = M2 % 2')
+  scale.lines.push('n5.5 // [-2.5 2>')
+  scale.lines.push('n2.5 // [-4.5 3> = M2 * 3/2')
+  scale.lines.push('sA6.5 // [-5.5 4>')
+  scale.lines.push('P8')
+}
+
 function semiquartals() {
   scale.name = 'Semiquartals'
   scale.autoFrequency = true
   scale.lines.length = 0
   scale.lines.push('440 Hz')
-  scale.lines.push('n4.5')
-  scale.lines.push('n1.5')
-  scale.lines.push('n5.5 // P4 * 3/2')
-  scale.lines.push('n2.5 // P4 % 2')
-  scale.lines.push('n6.5 // P12 % 2')
-  scale.lines.push('n3.5')
+  scale.lines.push('d2.5 // [12 -7.5>')
+  scale.lines.push('m6.5 // [11 -6.5>')
+  scale.lines.push('m3.5 // [9 -5.5>')
+  scale.lines.push('m7.5 // [8 -4.5>')
+  scale.lines.push('m4.5 // [6 -3.5>')
+  scale.lines.push('m1.5 // [4 -2.5>')
+  scale.lines.push('m5.5 // [3 -1.5> = P4 * 3/2')
+  scale.lines.push('m2.5 // [1 -0.5> = P4 % 2')
+  scale.lines.push('M6.5 // [0 0.5> = P12 % 2')
+  scale.lines.push('M3.5 // [-2 1.5>')
+  scale.lines.push('M7.5 // [-3 2.5>')
+  scale.lines.push('M4.5 // [-5 3.5>')
+  scale.lines.push('M1.5 // [-7 4.5>')
+  scale.lines.push('M5.5 // [-8 5.5>')
+  scale.lines.push('M2.5 // [-10 6.5>')
+  scale.lines.push('A6.5 // [-11 7.5>')
+  scale.lines.push('P8')
 }
 </script>
 <template>
@@ -436,17 +480,65 @@ function semiquartals() {
   <p>TODO</p>
   <h4>Implicit tempering</h4>
   <p>TODO</p>
-  <h3>Neutral FJS</h3>
+  <h3>Neutral Pythagorean</h3>
+  <p>
+    The ordinal notation for the perfect fifth <code @click="relative">P5</code> masks the fact that
+    it spans 4 steps. This means that it can be split into two by introducing one new interval
+    quality: <i>neutral</i>.
+  </p>
+  <p>
+    The split fifth is called the neutral third <code @click="relative">n3</code> =
+    <code @click="relative">P5 % 2</code>.
+  </p>
+  <p>
+    Splitting the fifth also results in the augmented unison
+    <code @click="relative">A1</code> splitting into two semi-augmented unisons
+    <code @click="relative">sA1</code>.
+  </p>
+  <p>
+    By stacking fifths on top of the neutral third we get a whole chain of neutral intervals:
+    <code @click="neutrals">... n2, n6, n3, n7, ...</code>
+  </p>
+  <h4>Neutral absolute pitch</h4>
+  <p>TODO</p>
+  <h4>Neutral FJS</h4>
   <p>TODO</p>
   <h3>Interordinals</h3>
+  <h4>Tonesplitters</h4>
+  <p>
+    Technically the term <i>semitone</i> is a misnomer because
+    <code @click="relative">m2</code> doesn't split the tone <code @click="relative">M2</code> in
+    half with mathematical precission.
+  </p>
+  <p>
+    While not musically exciting, the theoretical implications of splitting a whole-tone
+    <code @click="relative">M2</code> into two true semi-whole-tones
+    <code @click="relative">n1.5</code> are worth exploring. e.g. we get notation for the semioctave
+    <code @click="relative">n4.5</code> = <code @click="relative">P8 % 2</code>.
+  </p>
+  <p>
+    Tonesplitters form a chain of offset fifths which are all qualified as neutral:
+    <code @click="tonesplitters">... n7.5, n4.5, n1.5, ...</code>.
+  </p>
   <h4>Semiquartals</h4>
   <p>
-    The perfect fourth spans an odd number of steps so splitting it moves us to interordinal
-    territory. The offset chain of fifths is
-    <code>n2.5, n6.5</code>
+    The true power of splitting the tone is revealed when we semidiminish the seven new intervals:
+    <code @click="relative">n2.5 + sd1</code> = <code @click="relative">m2.5</code> =
+    <code @click="relative">P4 % 2</code>.
   </p>
-  <p>I love the sound of the split fourth so consider this extension my personal indulgence.</p>
-  <h4>Semioctals</h4>
+  <p>
+    We've succesfully split the perfect fourth into two! <br />
+    From the orginal seven neutral intervals spawns 7 diminished, 7 minor, 7 major and 7 augmented
+    new semiquartal intervals with an internally consistent Pythagorean logic.
+  </p>
+  <p>
+    The offset chain of fifths is
+    <code @click="semiquartals">... m5.5, m2.5, M6.5, M3.5, ...</code>
+  </p>
+  <p>
+    I love the sound of the split fourth so consider tonesplitters leading into semiquartals a
+    personal indulgence.
+  </p>
   <p>TODO</p>
   <h3>Quarter-augmented intervals</h3>
   <p>TODO</p>
