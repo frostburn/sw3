@@ -136,6 +136,38 @@ function neutrals() {
   scale.lines.push('P8')
 }
 
+function neutralAbsolute_() {
+  scale.autoFrequency = false
+  scale.lines.length = 0
+  scale.lines.push('C4 = 261.63Hz')
+  scale.lines.push('D4')
+  scale.lines.push('Esb4')
+  scale.lines.push('F4')
+  scale.lines.push('G4')
+  scale.lines.push('Asb4')
+  scale.lines.push('Bsb4')
+}
+
+function neutralAbsolute() {
+  scale.name = 'Neutral absolute Pythagorean'
+  neutralAbsolute_()
+  scale.lines.push('C5')
+}
+
+function neutral17() {
+  scale.name = '17edo 3L4s'
+  neutralAbsolute_()
+  scale.lines.push('17@')
+  scale.lines.push('C5')
+}
+
+function neutral5() {
+  scale.name = '10edo! 3L4s'
+  neutralAbsolute_()
+  scale.lines.push("5@ // Bad practice, 5edo doesn't have a split fifth!")
+  scale.lines.push('C5')
+}
+
 function tonesplitters() {
   scale.name = 'Tonesplitters'
   scale.autoFrequency = true
@@ -340,7 +372,7 @@ function semiquartals() {
   </p>
   <p>
     Note that absolute pitches require a declaration of the root pitch on the first line:
-    <code @click="frequency">A4 = 420 Hz</code> (A4 is unambiguously a pitch here)
+    <code @click="frequency">A4 = 420 Hz</code> (A4 is unambiguously an absolute pitch here)
   </p>
   <p>
     FJS accidental are supported with absolute pitches. e.g.
@@ -354,8 +386,8 @@ function semiquartals() {
 
   <h2>Expressions</h2>
   <p>
-    SW3 differentiates between frequencies, frequency ratios (a.k.a. scalars) and pitches. Adding
-    together incompatible objects will result in a runtime error
+    SonicWeave differentiates between frequencies, frequency ratios (a.k.a. scalars) and pitches.
+    Adding incompatible objects together will result in a runtime error
     <code class="bad" @click="frequency">123Hz + 3/2 + 1\3</code>.
   </p>
   <p>
@@ -396,7 +428,10 @@ function semiquartals() {
     <code @click="relative">3^1/2</code> is the square root of three.
   </p>
   <h3>Logarithm</h3>
-  <p>TODO</p>
+  <p>
+    Exponentiation can be reverted with the logarithm (base n). e.g.
+    <code @click="relative">8 log 2</code> = <code @click="relative">3</code>.
+  </p>
   <h3>Modulo</h3>
   <p>
     The remainder after division is notated 'mod' and placed between the dividend and the divisor.
@@ -500,9 +535,51 @@ function semiquartals() {
     <code @click="neutrals">... n2, n6, n3, n7, ...</code>
   </p>
   <h4>Neutral absolute pitch</h4>
-  <p>TODO</p>
+  <p>
+    Because the sharp sign '#' is just syntactic sugar for '+ A1' we get neutral absolute pitch
+    basically for free.
+  </p>
+  <p>Try this neutral scale for a taste <code @click="neutralAbsolute">C4, D4, Esb4, ...</code></p>
+  <p>
+    Now use implict tempering to hear it in 17edo
+    <code @click="neutral17">... Bsb4, 17@, ...</code>.
+  </p>
+  <p>
+    <b>Warning</b>, implicit tempering takes everything literally and will split the fifth even if
+    that bridges into a higher equal temperament.<br />
+    Despite the appearance this scale is actually in 10edo
+    <code @click="neutral5">... Bsb4, 5@, ...</code>.
+  </p>
   <h4>Neutral FJS</h4>
-  <p>TODO</p>
+  <p>
+    Neutral intervals complement Pythagorean intervals beautifully by filling gaps in the octave
+    that are hard to reach through the chain of fifths.
+  </p>
+  <p>
+    The
+    <a href="https://en.xen.wiki/w/User:M-yac/Neutral_Intervals_and_the_FJS">neutral extension</a>
+    of the Functional Just System takes advantage of this by associating some primes like 11, 13,
+    29, 31, 37 etc. with a neutral interval. e.g. <code @click="relative">n3^11</code> =
+    <code @click="relative">11/9</code>.
+  </p>
+  <p>
+    SonicWeave won't let you bridge into irrationals. When combined with a regular Pythagorean
+    interval the accidentals are interpreted according to the original FJS specification. e.g.
+    <code @click="relative">m3^11</code> = <code @click="relative">11/9</code>.
+  </p>
+  <h3>Quarter-augmented intervals</h3>
+  <p>
+    The fifth can be split twice without breaking Pythagorean logic resulting in quarter-augmented
+    intervals.
+  </p>
+  <p>
+    The notational tweaks required consist of the quarter-augmented unison
+    <code @click="relative">qA1</code>, the sesqui-quarter-augmented unison
+    <code @click="relative">QA1</code>, semimajor intervals like
+    <code @click="relative">sM2</code> and semiminor intervals like
+    <code @click="relative">sm7</code>. Everything else that's classified as quarter-augmented
+    follows from these according to Pythagorean logic.
+  </p>
   <h3>Interordinals</h3>
   <h4>Tonesplitters</h4>
   <p>
@@ -522,7 +599,7 @@ function semiquartals() {
   </p>
   <h4>Semiquartals</h4>
   <p>
-    The true power of splitting the tone is revealed when we semidiminish the seven new intervals:
+    The true power of splitting the tone is revealed when we semidiminish one of the new intervals:
     <code @click="relative">n2.5 + sd1</code> = <code @click="relative">m2.5</code> =
     <code @click="relative">P4 % 2</code>.
   </p>
@@ -539,9 +616,6 @@ function semiquartals() {
     I love the sound of the split fourth so consider tonesplitters leading into semiquartals a
     personal indulgence.
   </p>
-  <p>TODO</p>
-  <h3>Quarter-augmented intervals</h3>
-  <p>TODO</p>
   <h3>Seconds</h3>
   <p>
     Under the hood SW3 has support for all time domain quantities. e.g.
