@@ -100,8 +100,16 @@ function syntonic() {
   scale.lines.push('P8')
 }
 
+function ptolemy() {
+  scale.name = 'The greater undecimal neutral second'
+  _relative()
+  scale.lines.push('"Ptolemy\'s comma" = 100/99')
+  scale.lines.push('10/9 % "Ptolemy\'s comma"')
+  scale.lines.push('2/1')
+}
+
 function reduce() {
-  scale.name = 'Fives against a double octave'
+  scale.name = 'Fives against a double-octave'
   _relative()
   scale.lines.push('5')
   scale.lines.push('5^2')
@@ -301,8 +309,8 @@ function semiquartals() {
 <template>
   <h1>Welcome to Scale Workshop 3</h1>
   <p>
-    This is the very early alpha of SW3. The purpose of this release is to get early feedback on the
-    new syntax I've decided to call <i><b>SonicWeave</b></i
+    This is the very early alpha of SW3. The purpose of this release is to get feedback on the new
+    syntax I've decided to call <i><b>SonicWeave</b></i
     >.
   </p>
   <p>
@@ -325,8 +333,8 @@ function semiquartals() {
   <h2>Interval types</h2>
   <h3>Frequencies</h3>
   <p>
-    Frequencies are denoted by a number followed by `Hz` with an optional
-    <a href="https://en.wikipedia.org/wiki/Metric_prefix">metric prefix</a>.
+    Frequencies are denoted by a number followed by 'Hz' with an optional
+    <a href="https://en.wikipedia.org/wiki/Metric_prefix" target="_blank">metric prefix</a>.
   </p>
   <p>
     All these are valid frequency expressions (<b>click</b> on the code to load a preset scale)
@@ -338,7 +346,7 @@ function semiquartals() {
   <h3>Ratios</h3>
   <p>
     Ratios of two frequencies are denoted by a numerator and a denominator separated by a slash
-    character. e.g. <code @click="relative">3/2</code>.
+    character '/'. e.g. <code @click="relative">3/2</code>.
   </p>
   <p>
     The numerator is optional: <code @click="relative">/2</code> is the same as
@@ -365,7 +373,7 @@ function semiquartals() {
   </p>
   <p>
     SW internals make a difference between rationals and reals. To make sure that a decimal number
-    is not associated with any prime use an exclamation mark after the number e.g.
+    is not associated with any prime, use an exclamation mark after the number e.g.
     <code @click="relative">3.14159265!</code>
   </p>
 
@@ -382,7 +390,7 @@ function semiquartals() {
     frequency ratio.
   </p>
   <p>
-    The interval to be equally divided in pitch-space can be specified in angle brackets
+    The interval to be equally divided (in pitch-space) may be specified in angle brackets
     <code @click="relative">7\9&lt;3&gt;</code> is three to the power of seven ninths as a frequency
     ratio. The angle brackets may contain any valid SonicWeave expression.
   </p>
@@ -426,15 +434,23 @@ function semiquartals() {
   </p>
   <h3>FJS</h3>
   <p>
-    The <a href="https://en.xen.wiki/w/Functional_Just_System">Functional Just System</a> extends
-    Pythagorean notation using microtonal accidentals that move from the <i>spine</i> of fifths to
-    higher primes. e.g. the major third <code @click="relative">M3</code> =
-    <code @click="relative">81/64</code> is fairly complex as a ratio but the 5-limit major third is
-    much simpler <code @click="relative">M3^5</code> = <code @click="relative">5/4</code>.
+    The
+    <a href="https://en.xen.wiki/w/Functional_Just_System" target="_blank"
+      >Functional Just System</a
+    >
+    extends Pythagorean notation using microtonal accidentals that move from the <i>spine</i> of
+    fifths to higher primes. e.g. the pythagorean major third <code @click="relative">M3</code> =
+    <code @click="relative">81/64</code> is a fairly ratio but the 5-limit major third is much
+    simpler <code @click="relative">M3^5</code> = <code @click="relative">5/4</code>.
   </p>
   <p>
-    Note that in FJS the accidentals signify where the higher primes are in the fraction. The
-    superscript 5 actually goes down in pitch while the subscript 5 goes up in pitch. Compare
+    Note that in FJS the accidentals signify where the higher primes are in the fraction.
+    Superscripts mean that the primes are in the numerator while subscripts signify that the primes
+    are in the denominator.
+  </p>
+  <p>
+    E.g. the superscript 5 actually goes down in pitch while the subscript 5 goes up in pitch.
+    Compare
     <code @click="relative">m3</code> with <code @click="relative">m3_5</code>.
   </p>
   <h3>Absolute pitches</h3>
@@ -446,18 +462,21 @@ function semiquartals() {
   </p>
   <p>
     Due to a historical quirk instead of going alphabetically the octaves begin at C and go D, E, F,
-    G, A and B before starting the next octave.
+    G, A and B before repeating at the next octave.
   </p>
   <p>
-    Instead of becoming augmented absolute pitches acquire accidentals:<br />
-    <code @click="relative">C#4</code> is the same as
+    Instead of becoming augmented, absolute pitches acquire accidentals:<br />
+    <code @click="relative">C#4</code> "C sharp four" is the same as
     <code @click="relative">C4 + A1</code> and<br />
-    <code @click="relative">Cb4</code> is the same as <code @click="relative">C4 + d1</code>.
+    <code @click="relative">Cb4</code> "C flat four" is the same as
+    <code @click="relative">C4 + d1</code>.
   </p>
+  <h4>A vs. augmented</h4>
   <p>
     It is an unfortunate bug of this common notation that <i>"A of octave 4"</i> and
     <i>"augmented fourth"</i> collide. To get around it you can write this nominal in lower case
-    <code @click="relative">a4</code> or with a natural sign <code @click="relative">A=4</code>.
+    <code @click="relative">a4</code> or with an explicit natural sign
+    <code @click="relative">A=4</code>.
   </p>
   <p>
     Note that absolute pitches require a declaration of the root pitch on the first line:
@@ -481,11 +500,11 @@ function semiquartals() {
   </p>
   <p>
     Full arithmetic with parenthesis is supported featuring addition, subtraction, multiplication,
-    division, exponentiation and modulo.
+    division, exponentiation and more.
   </p>
   <h3>Additive operators</h3>
   <p>
-    Addition and subtraction have the lowest precedence.
+    Addition and subtraction have the lowest precedence of all of the operations.
     <code @click="relative">5 - 1 - 2 + 4</code> is equal to <code @click="relative">6</code>.
   </p>
   <h3>Multiplicative operators</h3>
@@ -495,13 +514,14 @@ function semiquartals() {
     and '÷' for division.
   </p>
   <p>
-    Multiplication has the lowest precedence after addition.
+    Multiplication has a higher precedence than addition.
     <code @click="relative">9 % 3 + 5 * 7 - 30</code> is equal to <code @click="relative">8</code>.
   </p>
   <p>
-    You can only multiply by scalars <code @click="relative">2 × P4</code>. Multiplying pitches
-    makes no sense <code class="bad" @click="relative">M3 * P3</code>. Division works between
-    frequencies and produces ratios <code @click="relative">500Hz ÷ 400Hz</code>
+    You can only multiply by scalars <code @click="relative">2 × P4</code>. <br />
+    Multiplying pitches makes no sense <code class="bad" @click="relative">M3 * P3</code>. <br />
+    Division works between frequencies and produces ratios
+    <code @click="relative">500Hz ÷ 400Hz</code>.
   </p>
   <h3>Exponentiation</h3>
   <p>
@@ -544,11 +564,11 @@ function semiquartals() {
     <code @click="relative">1/2</code>.
   </p>
   <p>
-    All by themselves negative frequencies are not that interesting as they sound the same:
+    By themselves negative frequencies are not that interesting as they sound the same:
     <code @click="frequency">-440 Hz</code> ~ <code @click="frequency">440 Hz</code>
   </p>
   <h3>Functions</h3>
-  <p>At this point SonicWeave comes with only a handful of functions.</p>
+  <p>At this point in developent SonicWeave comes with only a handful of functions.</p>
   <p>
     Converting values to frequency is handy for building equally beating scales
     <code @click="equalBeats">(frequency(6) - 1Hz) % 5, ...</code>.
@@ -562,12 +582,13 @@ function semiquartals() {
     <code @click="relative">M3 - pitch(81/80)</code>.
   </p>
   <p>
-    MIDI-to-frequency converts scalars to frequencies of 12-tone equal temperament with A4 = 440 Hz
+    MIDI-(index)-to-frequency converts scalars to frequencies of 12-tone equal temperament with A4 =
+    440 Hz
     <code @click="relative">mtof(69)</code>.
   </p>
   <p>
-    Frequency-to-MIDI does the reverse <code @click="relative">ftom(11 Hz)</code> (not so useful by
-    itself).
+    Frequency-to-MIDI-(index) does the reverse <code @click="relative">ftom(11 Hz)</code> (not so
+    useful by itself).
   </p>
   <p>
     Converting nanometers to frequency is used to stress test the system with atomic spectra
@@ -583,10 +604,20 @@ function semiquartals() {
     You can declare custom variables using dollar sign '$' syntax
     <code @click="syntonic">$syntonic = pitch(9/8 % 10/9)</code>
   </p>
+  <h4>Quoted variables</h4>
+  <p>
+    The grammar places limits on what is a valid name for a variable. If you wish to use spaces or
+    reserved characters in the name, wrap it in double quotes:
+    <code @click="ptolemy">"Ptolemy's comma" = 100/99</code>.
+  </p>
   <h4>Variable access</h4>
   <p>
-    You cab access declared variables by name using corresponding dollar sign '$' syntax
+    You can access declared variables by name using corresponding dollar sign '$' syntax:
     <code @click="syntonic">m3 + $syntonic</code>
+  </p>
+  <p>
+    Quoted variables are accessed using double quotes:
+    <code @click="ptolemy">10/9 % "Ptolemy's comma"</code>.
   </p>
   <h3>Map declaration</h3>
   <p>
@@ -609,12 +640,12 @@ function semiquartals() {
   </p>
   <h4>Current index</h4>
   <p>
-    The index of the current line is stored in '$#' which makes it easy to e.g. create harmonic
-    segments: <code @click="contextHarmonics">($# + 7) % 7</code>
+    The index of the current line is stored in '$#' which makes it easy to create harmonic segments:
+    <code @click="contextHarmonics">($# + 7) % 7</code>
   </p>
   <h4>Current MIDI note</h4>
   <p>
-    The MIDI note corresponding to the line is stored in '$##' which e.g. makes movable-do systems
+    The MIDI note corresponding to the line is stored in '$##' which makes movable-do systems
     possible: <code @click="movableDo">C0 = mtof($##), ...</code>
   </p>
   <h3>Vals</h3>
@@ -625,9 +656,9 @@ function semiquartals() {
   </p>
   <h3>Warts</h3>
   <p>
-    <a href="https://en.xen.wiki/w/Val#Shorthand_notation">Wart notation</a> makes it easy to create
-    vals corresponding to equal temperaments. SonicWeave uses an at sign '@' at the end of the wart
-    notation to tell warts apart from other quantities.
+    <a href="https://en.xen.wiki/w/Val#Shorthand_notation" target="_blank">Wart notation</a> makes
+    it easy to create vals corresponding to equal temperaments. SonicWeave uses an <i>at</i> sign
+    '@' at the end of the wart notation to tell warts apart from other quantities.
   </p>
   <p>
     For example, we can (harmonically consistently) measure how many steps
@@ -644,8 +675,8 @@ function semiquartals() {
   </p>
   <p>
     Vals by themselves cannot be interpreted as pitches so the formula is used implicitly when a
-    line produces a val. The previous example can simply be written as
-    <code @click="implicitPentatonic31">31@</code>
+    line produces a val. <br />
+    The previous example can simply be written as <code @click="implicitPentatonic31">31@</code>.
   </p>
   <h4>Explicit subgroup</h4>
   <p>
@@ -707,7 +738,9 @@ function semiquartals() {
   </p>
   <p>
     The
-    <a href="https://en.xen.wiki/w/User:M-yac/Neutral_Intervals_and_the_FJS">neutral extension</a>
+    <a href="https://en.xen.wiki/w/User:M-yac/Neutral_Intervals_and_the_FJS" target="_blank"
+      >neutral extension</a
+    >
     of the Functional Just System takes advantage of this by associating some primes like 11, 13,
     29, 31, 37 etc. with a neutral interval. e.g. <code @click="relative">n3^11</code> =
     <code @click="relative">11/9</code>.
@@ -755,8 +788,8 @@ function semiquartals() {
   </p>
   <p>
     We've succesfully split the perfect fourth into two! <br />
-    From the orginal seven neutral intervals spawns 7 diminished, 7 minor, 7 major and 7 augmented
-    new semiquartal intervals with an internally consistent Pythagorean logic.
+    From the orginal seven neutral intervals spawn 7 diminished, 7 minor, 7 major and 7 augmented
+    semiquartal intervals with an internally consistent Pythagorean logic.
   </p>
   <p>
     The offset chain of fifths is
@@ -765,6 +798,15 @@ function semiquartals() {
   <p>
     I love the sound of the split fourth so consider tonesplitters leading into semiquartals a
     personal indulgence.
+  </p>
+  <h4>Future work</h4>
+  <p>
+    Interordinals fall in-between the gaps of nominals: <code @click="relative">C4 + m2.5</code> is
+    somewhere between <code @click="relative">D4</code> and <code @click="relative">E4</code>.
+  </p>
+  <p>
+    I'm planning on implementing a standard chain of Greek nominals to fill in these gaps left by
+    Latin letters.
   </p>
   <h3>Seconds</h3>
   <p>
@@ -776,8 +818,10 @@ function semiquartals() {
   <p>
     If you really want to understand the meaning of <code @click="relative">€ * c</code>, I suggest
     reading my
-    <a href="https://en.xen.wiki/w/User:Frostburn/Theory_From_First_Principles">notes</a> over at
-    XenWiki.
+    <a href="https://en.xen.wiki/w/User:Frostburn/Theory_From_First_Principles" target="_blank"
+      >notes</a
+    >
+    over at XenWiki.
   </p>
 </template>
 <style scoped>

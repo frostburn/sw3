@@ -25,7 +25,15 @@ export const useScaleStore = defineStore('scale', () => {
     if (autoFrequency.value) {
       inputs[0] = autoLine.value
     }
-    return inputs
+    const result = []
+    for (const input of inputs) {
+      const trimmed = input.trim()
+      if (!trimmed.length || trimmed.startsWith('//')) {
+        continue
+      }
+      result.push(input)
+    }
+    return result
   }
 
   // Scale parsing may fail so `scale` can't just be a computed property.
@@ -33,10 +41,7 @@ export const useScaleStore = defineStore('scale', () => {
     const inputs = getInputs()
     error.value = ''
     try {
-      const newScale = parseScale(
-        inputs.filter((i) => i.length),
-        baseMidiNote.value
-      )
+      const newScale = parseScale(inputs, baseMidiNote.value)
       scale.value = newScale
     } catch (e) {
       if (typeof e === 'string') {
