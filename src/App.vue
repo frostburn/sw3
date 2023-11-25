@@ -23,6 +23,16 @@ function keyboardNoteOn(index: number) {
   if (!audioContext.synth) {
     return emptyKeyup
   }
+  let frequency: number
+  if (index < 0 || index >= 128) {
+    frequency = scale.scale.getFrequency(index)
+  } else {
+    frequency = frequencies.value[index]
+  }
+  // Outside WebAudio API nominal range
+  if (Math.abs(frequency) > 24000) {
+    return emptyKeyup
+  }
   return audioContext.synth.noteOn(frequencies.value[index], 0.9)
 }
 
@@ -48,6 +58,9 @@ function windowKeydownOrUp(event: KeyboardEvent | MouseEvent) {
 
 // === Handle special keys ===
 function windowKeydown(event: KeyboardEvent) {
+  // Audio context must be initialized as a response to user gesture.
+  audioContext.initialize()
+
   // Currently editing the scale, bail out
   if (!typingActive.value) {
     return
@@ -101,7 +114,6 @@ watch(colorScheme, (newValue) => {
 onMounted(() => {
   document.addEventListener('touchstart', audioContext.initialize)
   document.addEventListener('mousedown', audioContext.initialize)
-  document.addEventListener('keydown', audioContext.initialize)
 
   window.addEventListener('keyup', windowKeyup)
   window.addEventListener('keydown', windowKeydownOrUp)
@@ -137,7 +149,6 @@ onUnmounted(async () => {
 
   document.removeEventListener('touchstart', audioContext.initialize)
   document.removeEventListener('mousedown', audioContext.initialize)
-  document.removeEventListener('keydown', audioContext.initialize)
 
   await audioContext.unintialize()
 })

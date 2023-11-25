@@ -142,6 +142,7 @@ export const useAudioContextStore = defineStore('audio-context', () => {
   return {
     initialize,
     unintialize,
+    context,
     mainVolume,
     maxPolyphony,
     waveform,

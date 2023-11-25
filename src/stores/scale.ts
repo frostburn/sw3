@@ -10,7 +10,7 @@ export const useScaleStore = defineStore('scale', () => {
   const enharmonic = ref(enharmonics.value[0])
   const autoFrequency = ref(true)
   const lines = reactive(['261.63Hz', 'P8'])
-  const scale = ref(new Scale([0], 1200, 261.63, 60))
+  const scale = ref(new Scale([1], 2, 261.63, 60))
   const error = ref('')
 
   const autoLine = computed(() => `${enharmonic.value} = mtof(${baseMidiNote.value})`)
