@@ -3,6 +3,12 @@ import { useScaleStore } from '@/stores/scale'
 
 const scale = useScaleStore()
 
+function _relative() {
+  scale.autoFrequency = true
+  scale.lines.length = 0
+  scale.lines.push('440 Hz')
+}
+
 function frequency(event: MouseEvent) {
   const target = event.target as unknown as HTMLElement
   scale.name = target.textContent!
@@ -15,18 +21,14 @@ function frequency(event: MouseEvent) {
 function relative(event: MouseEvent) {
   const target = event.target as unknown as HTMLElement
   scale.name = target.textContent!
-  scale.autoFrequency = true
-  scale.lines.length = 0
-  scale.lines.push('440 Hz')
+  _relative()
   scale.lines.push(target.textContent!)
   scale.lines.push('P8')
 }
 
 function pythagoras() {
   scale.name = 'Pythagorean chain of fifths'
-  scale.autoFrequency = true
-  scale.lines.length = 0
-  scale.lines.push('440 Hz')
+  _relative()
   for (const input of 'd5,m2,m6,m3,m7,P4,P1,P5,M2,M6,M3,M7,A4'.split(',')) {
     scale.lines.push(input)
   }
@@ -118,6 +120,25 @@ function reduce() {
   scale.lines.push('5^5')
   scale.lines.push('= $ reduce 4')
   scale.lines.push('4')
+}
+
+function context1() {
+  scale.name = 'Positive backreference'
+  _relative()
+  scale.lines.push('P4')
+  scale.lines.push('$1 + M2')
+  scale.lines.push('P8')
+}
+
+function superwhole() {
+  scale.name = 'Super-whole-tones'
+  _relative()
+  scale.lines.push('$-1 * 8/7')
+  scale.lines.push('$-1 * 8/7')
+  scale.lines.push('$-1 * 8/7')
+  scale.lines.push('$-1 * 8/7')
+  scale.lines.push('$-1 * 8/7')
+  scale.lines.push('2')
 }
 
 function neutrals() {
@@ -230,7 +251,7 @@ function semiquartals() {
   <p>By default the base frequency will be automatically calculated based on the MIDI note.</p>
   <p>
     The alpha doesn't have a tuning table or a virtual keyboard so the only way to make sound is to
-    hit keys on a physical keyboard (the typing kind, MIDI input is also missing).
+    hit keys on a physical keyboard (the typing kind; MIDI input is also missing).
   </p>
 
   <h2>Interval types</h2>
@@ -508,6 +529,19 @@ function semiquartals() {
 
   <h2>Advanced topics</h2>
   <h3>Context variables</h3>
+  <h4>Previous lines</h4>
+  <p>
+    You can refer to the base frequency using <code @click="relative">$0</code> or to any of the
+    previous interval starting from '1' with <code @click="context1">$1</code>.
+  </p>
+  <p>
+    Negative indices are counted back from the current line excluding variable definitions. This
+    allows you to e.g. stack an interval using backreferences:
+    <code @click="superwhole">$-1 * 8/7</code>.
+  </p>
+  <h4>Current index</h4>
+  <p>TODO</p>
+  <h4>Current MIDI note</h4>
   <p>TODO</p>
   <h3>Vals</h3>
   <p>TODO</p>
