@@ -129,6 +129,69 @@ export function initializeCustomWaveforms(audioContext: AudioContext) {
   CUSTOM_WAVEFORMS.boethius = audioContext.createPeriodicWave(zeros, boethius)
 }
 
+class UnisonOscillator {
+  high: OscillatorNode
+  low: OscillatorNode
+  _frequency: ConstantSourceNode
+
+  constructor(ctx: AudioContext) {
+    this.high = ctx.createOscillator()
+    this.low = ctx.createOscillator()
+    this._frequency = ctx.createConstantSource()
+
+    this.high.detune.setValueAtTime(2, ctx.currentTime)
+    this.low.detune.setValueAtTime(-2, ctx.currentTime)
+
+    this.high.frequency.setValueAtTime(0, ctx.currentTime)
+    this.low.frequency.setValueAtTime(0, ctx.currentTime)
+    this._frequency.connect(this.high.frequency)
+    this._frequency.connect(this.low.frequency)
+  }
+
+  get frequency() {
+    return this._frequency.offset
+  }
+
+  set type(value: OscillatorType) {
+    this.high.type = value
+    this.low.type = value
+  }
+
+  setPeriodicWave(periodicWave: PeriodicWave) {
+    this.high.setPeriodicWave(periodicWave)
+    this.low.setPeriodicWave(periodicWave)
+  }
+
+  start(when?: number) {
+    this.high.start(when)
+    this.low.start(when)
+    this._frequency.start(when)
+  }
+
+  stop() {
+    this.high.stop()
+    this.low.stop()
+    this._frequency.stop()
+  }
+
+  connect(destinationNode: AudioNode): AudioNode {
+    this.high.connect(destinationNode)
+    this.low.connect(destinationNode)
+
+    return destinationNode
+  }
+
+  addEventListener(type: 'ended', callback: () => void) {
+    this._frequency.addEventListener(type, callback)
+  }
+
+  disconnect() {
+    this.high.disconnect()
+    this.low.disconnect()
+    this._frequency.disconnect()
+  }
+}
+
 // Tracking numbers for voice stealing
 // Technically we could run out of note identifiers,
 // but who is going to play 9007199254740991 notes in one session?
@@ -141,7 +204,7 @@ let VOICE_ID = 1
 class Voice {
   age: number
   audioContext: AudioContext
-  oscillator: OscillatorNode
+  oscillator: OscillatorNode | UnisonOscillator
   envelope: GainNode
   log: (msg: string) => void
   noteId: number
@@ -152,7 +215,8 @@ class Voice {
     this.age = EXPIRED
     this.audioContext = audioContext
 
-    this.oscillator = this.audioContext.createOscillator()
+    // this.oscillator = this.audioContext.createOscillator()
+    this.oscillator = new UnisonOscillator(this.audioContext)
     this.envelope = this.audioContext.createGain()
     this.oscillator.connect(this.envelope).connect(destination)
     const now = this.audioContext.currentTime
